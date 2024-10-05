@@ -1,222 +1,241 @@
 
 <template>
     <div>
-<h3>{{tutorial}}</h3> 
+<!-- aca comienza todo -->
+  <v-row>
+    <!-- Fila 1 -->
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://eos.com/wp-content/uploads/2023/05/green-soybeans.jpg.webp"
+          height="200px"
+        ></v-img>
 
-    <v-card>
-      <v-toolbar flat color="primary" dark>
-        <v-toolbar-title>Registro de Tutorials</v-toolbar-title>
-      </v-toolbar>
-      <v-tabs v-model="tab">
-       
-       <v-tab href="#one">
-          <v-icon left>mdi-account</v-icon>
-          Registro
-        </v-tab>
-        
-        <v-tab href="#two" >
-          <v-icon left>mdi-dns</v-icon>
-          Listado
-        </v-tab>
-    </v-tabs>
-         <v-tabs-items :value="tab"> 
-          <!-- <div :value="tab"> -->
-        <v-tab-item value="one">
-          <v-card flat>
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
+
+        <v-card-subtitle>
+          <strong>07/11/2023</strong>
+        </v-card-subtitle>
+
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show1 = !show1">
+            <v-icon>{{ show1 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show1">
+            <v-divider></v-divider>
             <v-card-text>
-               <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-    >
-   
-   
-    <v-text-field
-           v-model="tutorial.titulo"
-           label="Titulo"
-           :counter="3"
-           :rules="textRules"
-           required
-         ></v-text-field>
-   
-   
-    <v-text-field
-           v-model="tutorial.texto"
-           label="Texto"
-           :counter="3"
-           :rules="textRules"
-           required
-         ></v-text-field>
-   
-   
-    <v-text-field
-           v-model="tutorial.imagen"
-           label="Imagen"
-           :counter="3"
-           :rules="textRules"
-           required
-         ></v-text-field>
-   
-   
-   
-   
-   		 <template>
-               <v-text-field
-                 v-model="dateFormatted"
-                 label="Date"
-                 hint="DD-MM-YYYY format"
-                 persistent-hint
-                 prepend-icon="mdi-calendar"      
-                 @blur="date = parseDate(dateFormatted)" 
-               ></v-text-field>
-             </template>
-             <v-date-picker
-               v-model="date"
-               no-title
-               @input="menu1 = false"
-             ></v-date-picker>
-             <!-- <p>Date in ISO format: <strong>{{ date }}</strong></p>
-    <p>Date in ISO format: <strong>{{dateFormatted}}</strong></p> -->
-   			
-   
-
- <v-row no-gutters>
-      
-      <v-col>
-      </v-col>
-
-      <v-col order="last">
-        
-      </v-col>
-     
-    </v-row>
-
-
-      
-      <v-btn
-        :disabled="!valid"
-        color="success"
-        class="mr-4"
-        @click="registrar"
-      >
-        Registrar
-      </v-btn>
-
-      <v-btn
-        color="error"
-        class="mr-4"
-        @click="reset();"
-      >
-        Cancelar
-      </v-btn>
-  
-    </v-form> 
+              <Strong>Cultivo De Soja: Condiciones De Crecimiento Y Cuidado</Strong><br>
+El cultivo de la soja no es especialmente complicado, crece bien con la cantidad justa de sol, calor y suelo húmedo. Sin embargo, las características del cultivo de soja hacen que, en las primeras etapas de crecimiento, la soja sea vulnerable a heladas, encharcamientos, enfermedades y plagas. <br>
+Así pues, los productores agrícolas deben conocer cómo cultivar soja, seleccionando cuidadosamente el momento ideal de siembra y monitorizando de cerca sus cultivos durante el proceso de crecimiento. Afortunadamente, la tecnología moderna aplicada al cultivo de la soja permite monitorizarla a distancia. Una vez que el cultivo ha madurado, cosecharlas en el momento adecuado garantizará que todos los esfuerzos del agricultor han merecido la pena.
             </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+<!-- cultivo de trigo -->
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://eos.com/wp-content/uploads/2023/05/wheat-crop-field.jpg.webp"
+          height="200px"
+        ></v-img>
 
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
 
-           <v-card-text>
+        <v-card-subtitle>
+           <strong>07/11/2023</strong>
+        </v-card-subtitle>
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show2 = !show2">
+            <v-icon>{{ show2 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
 
-            <v-alert
-      border="top"
-      colored-border
-      type="info"
-      elevation="2"
-      
-    >
-      El presente registro es responsable de almacenar información sobre el Tutorial.<br>
-      
-    </v-alert>
-
-          </v-card-text>
-
-
-
-
-          </v-card>
-        </v-tab-item>
-
-   <!--  fin item 1-->
-<v-tab-item value="two">
-          <v-card flat>
+        <v-expand-transition>
+          <div v-show="show2">
+            <v-divider></v-divider>
             <v-card-text>
-
-<v-text-field
-            v-model="buscador" 
-            placeholder="Ejemplo: Juan Perez"
-            outlined
-           
-          >
-          <template v-slot:label>
-          <v-icon style="vertical-align: middle">
-            mdi-magnify
-          </v-icon>
-          Busqueda por nombre de Tutorial
-        </template>
-          
-          
-          </v-text-field>
-
-
-
-             
- <v-simple-table fixed-header>
-    <template v-slot:default>
-
-
-      <thead class="thead-dark">
-        <tr>    
-			
-		<th scope="col">Id</th>
-		<th scope="col">Titulo</th>
-		<th scope="col">Texto</th>
-		<th scope="col">Imagen</th>
-		 <th scope="col">Fecha</th>
-		        <th scope="col">Editar</th>
-		          <th scope="col">Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="tutorial in tutorialsBuscados" :key="tutorial.codigo">       
-<td>{{tutorial.id}}</td>
-
-
-<td>{{tutorial.titulo}}</td>
-
-
-<td>{{tutorial.texto}}</td>
-
-
-<td>{{tutorial.imagen}}</td>
-
-
- <td>{{tutorial.fecha}}</td>
-
-
-
-          <td>
-              <button @click="editarTutorial(tutorial)" class="btn"><v-icon left>mdi-pencil</v-icon></button>
-              
-            </td>
-            <td>
-              <button @click="eliminarTutorial(tutorial)" class="btn"><v-icon left>mdi-delete-forever</v-icon></button>
-            </td>
-     
- </tr>
-      </tbody>
-    </template>
-  </v-simple-table>
-
+              <strong>Cultivo De Trigo: Como Sembrar, Manejar Y Cosechar</strong> <br>
+El cultivo del trigo depende en gran medida de cuál de las 2 variedades existentes vamos a plantar. Aunque cada una tiene sus propios requisitos de crecimiento y cuidado, conocer cómo se cultiva el trigo de forma general puedes ser útil, puesto que hay más similitudes que diferencias. <br>
+Una técnica adecuada de cultivo de trigo se basa en regar en los momentos adecuados durante las distintas etapas de crecimiento, añadir fertilizantes y vigilar la maleza, las plagas y las enfermedades. Éstas y otras tareas forman parte del manejo del cultivo de trigo y pueden beneficiarse del uso de tecnología de agricultura de precisión.
             </v-card-text>
-          </v-card>
-        </v-tab-item>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+<!-- Aca empieza otro -->
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://www.lanacion.com.py/resizer/v2/7F3QF45E5NBX3GO6CILZDXMZU4.jpeg?auth=ddc7d39cb783e2655e38f9a3a42f4ebb8a1db1f512bf8f8058ab7c8696ec037c&width=1016&smart=true"
+          height="200px"
+        ></v-img>
 
-        <!--  fin item 2-->
-     
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
 
-      </v-tabs-items> 
+        <v-card-subtitle>
+          <strong>07/11/2023</strong>
+        </v-card-subtitle>
 
-          <!-- </div> -->
-    </v-card>
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show1 = !show1">
+            <v-icon>{{ show1 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show1">
+            <v-divider></v-divider>
+            <v-card-text>
+              Prefiere suelos ligeros a medios, bien drenados, no demasiado húmedos; como la mayoría de las salvias, es tolerante respecto a la acidez y a la sequía, pero no soporta las heladas. Requiere abundante sol, y no fructifica en la sombra.
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+
+    <!-- Fila 2 -->
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://eos.com/wp-content/uploads/2023/09/how-to-grow-sunflower.png.webp"
+          height="200px"
+        ></v-img>
+
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
+
+        <v-card-subtitle>
+          <strong>07/11/2023</strong>
+        </v-card-subtitle>
+
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show1 = !show1">
+            <v-icon>{{ show1 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show5">
+            <v-divider></v-divider>
+            <v-card-text>
+              <strong>Cultivo De Girasol: De La Siembra A La Cosecha</strong> <br>
+El cultivo de girasoles es muy lucrativo para los agricultores debido a sus múltiples usos, desde aceite y semillas hasta alimento para el ganado. El éxito en el cultivo del girasol empieza por conocer las condiciones locales de crecimiento y plantar en el momento adecuado. Los agricultores deben proporcionar a su girasol diversos cuidados durante toda la temporada, asegurándose de que el cultivo en crecimiento tenga suficiente agua, suelo fértil y esté libres de plagas. Asimismo, es esencial realizar la cosecha del girasol a tiempo para no malgastar ni dinero ni semillas por culpa de una mala programación. <br>
+Gracias a la tecnología agrícola moderna y su conocimiento agronómico, los agricultores pueden superar cualquier dificultad y promover el cultivo del girasol en todo su potencial.
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://eos.com/wp-content/uploads/2023/04/rice-field.jpg.webp"
+          height="200px"
+        ></v-img>
+
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
+
+        <v-card-subtitle>
+          <strong>07/11/2023</strong>
+        </v-card-subtitle>
+
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show1 = !show1">
+            <v-icon>{{ show1 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show1">
+            <v-divider></v-divider>
+            <v-card-text>
+              <strong>Cultivo Del Arroz: Técnicas E Impacto Medioambiental</strong> <br>
+Desde el punto de vista de la seguridad alimentaria mundial, el cultivo del arroz es una actividad esencial. Sin embargo, a pesar de saber cómo crece el arroz, todavía se siguen usando prácticas de cultivo anticuadas, que resultan ineficaces tanto en términos de agricultura industrial como por su impacto medioambiental. <br>
+Algunos de los costes medioambientales del cultivo de arroz son la inundación de tierras para convertirlas en arrozales, las enormes emisiones de gases de efecto invernadero y el uso excesivo de productos químicos. Afortunadamente, existen numerosos métodos de cómo cultivar arroz de forma más inteligente, rentable y sostenible.
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12" sm="4" md="4">
+      <v-card class="mx-auto" max-width="344">
+        <v-img
+          src="https://eos.com/wp-content/uploads/2023/03/dry-corn.jpg.webp"
+          height="200px"
+        ></v-img>
+
+        <v-card-title>
+          <Strong>Autor: </Strong>Juan Perez
+        </v-card-title>
+
+        <v-card-subtitle>
+          <strong>07/11/2023</strong>
+        </v-card-subtitle>
+
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text>
+            Explore
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show6 = show6">
+            <v-icon>{{ show1 ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-expand-transition>
+          <div v-show="show6">
+            <v-divider></v-divider>
+            <v-card-text>
+              <strong>Cultivo Del Maíz: Consejos Para Tener Una Buena Cosecha</strong> <br>
+              Cultivar maíz es rentable si se le proporciona suficiente espacio, calor y agua. Sin embargo, el cultivo del maíz es muy sensible al clima y a las condiciones del campo, no existe una respuesta única para todos los casos. Con la tecnología disponible hoy en día, las ventajas de sembrar maíz radican en un proceso que se puede ajustar rápidamente para obtener el máximo rendimiento, controlando diversos factores del campo, como el clima, los datos de humedad del suelo, las potenciales amenazas, incluidas la maleza y las plagas y mucho más.
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
+    </v-col>
+  </v-row>
+
+
+
+
+
+
+<!-- aca termina todo -->
   </div>
 </template>
 
@@ -246,6 +265,12 @@ export default {
     }
   },
     data: vm => ({
+      show1: false,  // Controla el desplegable de la primera carta
+      show2: false,  // Controla el desplegable de la segunda carta
+      show3: false,  // Controla el desplegable de la tercera carta
+      show4: false,  // Controla el desplegable de la cuarta carta
+      show5: false,  
+      show6: false,
     valid: true,
     tab:"",
     buscador:'',
