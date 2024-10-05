@@ -56,6 +56,14 @@
         disabled
       ></v-text-field>
 
+      <!-- Suggested Crops -->
+      <v-text-field
+        label="Suggested Crops"
+        v-model="suggestedCrops"
+        readonly
+        disabled
+      ></v-text-field>
+
       <!-- Submit Button -->
       <v-btn @click="submitForm" :disabled="!valid">Generate Request</v-btn>
     </v-form>
@@ -87,13 +95,14 @@ export default {
     return {
       valid: false,
       requestData: {
-        start: '20200101',
-        end: '20210101',
+        start: '20230101',
+        end: '20231231',
         latitude: '-24',
         longitude: '-54',
         parameter: ''
       },
       totalPrecipitation: 0, // New property to hold total precipitation
+      suggestedCrops: '', // New property to hold suggested crops
       parameters: [
         { name: 'Precipitation Total (PRECTOT)', value: 'PRECTOT' },
         { name: 'Precipitación Total Corregida (PRECTOTCORR)', value: 'PRECTOTCORR' }, // Agregado
@@ -166,6 +175,9 @@ export default {
 
       // Calcular la suma total de precipitaciones
       this.totalPrecipitation = values.reduce((acc, value) => acc + value, 0);
+      
+      // Sugerir cultivos según la precipitación total
+      this.suggestCrops(this.totalPrecipitation);
 
       // Actualizar los datos del gráfico
       this.chartData = {
@@ -180,6 +192,23 @@ export default {
           }
         ]
       };
+    },
+    suggestCrops(totalPrecipitation) {
+      if (totalPrecipitation < 300) {
+        this.suggestedCrops = "Trigo, Cítricos";
+      } else if (totalPrecipitation >= 300 && totalPrecipitation < 400) {
+        this.suggestedCrops = "Trigo, Soja";
+      } else if (totalPrecipitation >= 400 && totalPrecipitation < 500) {
+        this.suggestedCrops = "Soja, Maíz";
+      } else if (totalPrecipitation >= 500 && totalPrecipitation < 600) {
+        this.suggestedCrops = "Soja, Maíz, Trigo";
+      } else if (totalPrecipitation >= 600 && totalPrecipitation < 800) {
+        this.suggestedCrops = "Maíz, Soja, Cítricos";
+      } else if (totalPrecipitation >= 800 && totalPrecipitation < 1200) {
+        this.suggestedCrops = "Maíz, Soja, Arroz";
+      } else {
+        this.suggestedCrops = "Trigo, Soja,Maíz,Arroz, Cítricos";
+      }
     }
   }
 };
