@@ -1,0 +1,26 @@
+
+{
+    "descripcion":"agrotech",
+    "proyectoDetalle":"Foro y consumicion de apis de la NASA",
+    "nombreDev":"",
+    "correo":"magzoaa@gmail.com",
+    "url":"URL",
+    "socialLinks":[
+        {
+            "name" : "Facebook",
+            "link" : "https://www.facebook.com/magno.anzoategui",
+            "icon" : "mdi-facebook"
+        },
+        {
+            "name" : "Linkedin",
+            "link" : "https://www.linkedin.com/in/magno-portillo-aaba34125/",
+            "icon" : "mdi-linkedin"
+        },
+        {
+            "name" : "Twitter",
+            "link" : "https://twitter.com/Magzoa",
+            "icon" : "mdi-twitter"
+        }
+    ]
+}
+
