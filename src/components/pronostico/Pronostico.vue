@@ -1,446 +1,197 @@
-
 <template>
-    <div>
-<h3>{{pronostico}}</h3> 
+  <v-container>
 
-    <v-card>
-      <v-toolbar flat color="primary" dark>
-        <v-toolbar-title>Registro de Pronosticos</v-toolbar-title>
-      </v-toolbar>
-      <v-tabs v-model="tab">
-       
-       <v-tab href="#one">
-          <v-icon left>mdi-account</v-icon>
-          Registro
-        </v-tab>
-        
-        <v-tab href="#two" >
-          <v-icon left>mdi-dns</v-icon>
-          Listado
-        </v-tab>
-    </v-tabs>
-         <v-tabs-items :value="tab"> 
-          <!-- <div :value="tab"> -->
-        <v-tab-item value="one">
-          <v-card flat>
-            <v-card-text>
-               <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-    >
-   
-   
-   
-   
-   		 <template>
-               <v-text-field
-                 v-model="dateFormatted"
-                 label="Date"
-                 hint="DD-MM-YYYY format"
-                 persistent-hint
-                 prepend-icon="mdi-calendar"      
-                 @blur="date = parseDate(dateFormatted)" 
-               ></v-text-field>
-             </template>
-             <v-date-picker
-               v-model="date"
-               no-title
-               @input="menu1 = false"
-             ></v-date-picker>
-             <!-- <p>Date in ISO format: <strong>{{ date }}</strong></p>
-    <p>Date in ISO format: <strong>{{dateFormatted}}</strong></p> -->
-   			
-    <v-text-field
-           v-model="pronostico.fechaString"
-           label="FechaString"
-           :counter="3"
-           :rules="textRules"
-           required
-         ></v-text-field>
-   
-   
-   
-   
-   <v-text-field
-       label="Precipitacion"
-       type="number"
-       v-model="pronostico.precipitacion"
-       :rules="numberRules"
-     ></v-text-field>
-   
-   
-    <v-text-field
-           v-model="pronostico.observacion"
-           label="Observacion"
-           :counter="3"
-           :rules="textRules"
-           required
-         ></v-text-field>
-   
-   
-   
+    {{ requestData }}
+    <v-form v-model="valid">
+      <!-- Start Date -->
+      <v-text-field
+        label="Start Date (YYYYMMDD)"
+        v-model="requestData.start"
+        :rules="dateRules"
+        required
+      ></v-text-field>
 
- <v-row no-gutters>
-      
-      <v-col>
-      </v-col>
+      <!-- End Date -->
+      <v-text-field
+        label="End Date (YYYYMMDD)"
+        v-model="requestData.end"
+        :rules="dateRules"
+        required
+      ></v-text-field>
 
-      <v-col order="last">
-        
-      </v-col>
-     
-    </v-row>
+      <!-- Latitude -->
+      <v-text-field
+        label="Latitude"
+        type="number"
+        v-model="requestData.latitude"
+        :rules="latLongRules"
+        required
+      ></v-text-field>
 
+      <!-- Longitude -->
+      <v-text-field
+        label="Longitude"
+        type="number"
+        v-model="requestData.longitude"
+        :rules="latLongRules"
+        required
+      ></v-text-field>
 
-      
-      <v-btn
-        :disabled="!valid"
-        color="success"
-        class="mr-4"
-        @click="registrar"
-      >
-        Registrar
-      </v-btn>
+      <!-- Precipitation (Select Parameter) -->
+      <v-select
+        label="Parameter"
+        v-model="requestData.parameter"
+        :items="parameters"
+        item-text="name"
+        item-value="value"
+        :rules="[v => !!v || 'Please select a parameter']"
+        required
+      ></v-select>
 
-      <v-btn
-        color="error"
-        class="mr-4"
-        @click="reset();"
-      >
-        Cancelar
-      </v-btn>
-  
-    </v-form> 
-            </v-card-text>
+      <!-- Total Precipitation (Inactive Input) -->
+      <v-text-field
+        label="Total Precipitation"
+        v-model="totalPrecipitation"
+        readonly
+        disabled
+      ></v-text-field>
 
+      <!-- Submit Button -->
+      <v-btn @click="submitForm" :disabled="!valid">Generate Request</v-btn>
+    </v-form>
 
-           <v-card-text>
-
-            <v-alert
-      border="top"
-      colored-border
-      type="info"
-      elevation="2"
-      
-    >
-      El presente registro es responsable de almacenar información sobre el Pronostico.<br>
-      
-    </v-alert>
-
-          </v-card-text>
-
-
-
-
-          </v-card>
-        </v-tab-item>
-
-   <!--  fin item 1-->
-<v-tab-item value="two">
-          <v-card flat>
-            <v-card-text>
-
-<v-text-field
-            v-model="buscador" 
-            placeholder="Ejemplo: Juan Perez"
-            outlined
-           
-          >
-          <template v-slot:label>
-          <v-icon style="vertical-align: middle">
-            mdi-magnify
-          </v-icon>
-          Busqueda por nombre de Pronostico
-        </template>
-          
-          
-          </v-text-field>
-
-
-
-             
- <v-simple-table fixed-header>
-    <template v-slot:default>
-
-
-      <thead class="thead-dark">
-        <tr>    
-			
-		<th scope="col">Id</th>
-		 <th scope="col">Fecha</th>
-		<th scope="col">FechaString</th>
-		<th scope="col">Precipitacion</th>
-		<th scope="col">Observacion</th>
-		        <th scope="col">Editar</th>
-		          <th scope="col">Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="pronostico in pronosticosBuscados" :key="pronostico.codigo">       
-<td>{{pronostico.id}}</td>
-
-
- <td>{{pronostico.fecha}}</td>
-
-
-<td>{{pronostico.fechaString}}</td>
-
-
-<td>{{pronostico.precipitacion}}</td>
-
-
-<td>{{pronostico.observacion}}</td>
-
-
-
-          <td>
-              <button @click="editarPronostico(pronostico)" class="btn"><v-icon left>mdi-pencil</v-icon></button>
-              
-            </td>
-            <td>
-              <button @click="eliminarPronostico(pronostico)" class="btn"><v-icon left>mdi-delete-forever</v-icon></button>
-            </td>
-     
- </tr>
-      </tbody>
-    </template>
-  </v-simple-table>
-
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-
-        <!--  fin item 2-->
-     
-
-      </v-tabs-items> 
-
-          <!-- </div> -->
-    </v-card>
-  </div>
+    <!-- Chart Component -->
+    <line-chart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions"></line-chart>
+  </v-container>
 </template>
 
-
 <script>
-import pronosticoService from "@/services/pronosticoService.js";
+// Importing required components from vue-chartjs and chart.js
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
 
-import axios from 'axios'
-
-
-
+// Registering the required components globally
+ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
 export default {
-     name: 'Pronostico',
-    
   components: {
-   
-  },
-  computed: {
-    tab: {
-      set (tab) {
-        this.$router.replace({ query: { ...this.$route.query, tab } })
-      },
-      get () {
-        return this.$route.query.tab
+    LineChart: {
+      extends: Line,
+      props: ['chartData', 'chartOptions'],
+      mounted() {
+        this.renderChart(this.chartData, this.chartOptions);
       }
     }
   },
-    data: vm => ({
-    valid: true,
-    tab:"",
-    buscador:'',
-showPass: false,
-  pronosticos: [],
-        pronostico:{
-
-id:'',
- fecha:vm.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
-fechaString:'',
-		precipitacion:0, 
-observacion:'',
-
-          
-        },
-
-date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      dateFormatted: vm.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
-
-
-
-
-
-
-        rules: {
-                  required: value => !!value || 'Campo Requerido',
-                  min: v => v.length >= 5 || 'Minimo 5 caracteres',
-                  emailMatch: () => (`The email and password you entered don't match`),
-                },
-        	messages:undefined,
-        
-        
-        
-        
-        
-         numberRules: [
-              (v) => (v >= 0) || "Valor debe ser mayor o igual a 0",
-            ],
-        
-        
-    
-  }),
-  created(){
-
-       }
-  ,mounted(){
-      this.listarPronosticos();
-    
-      this.tab="two";
-
-   
-    },
-
-  methods: {
-    listarPronosticos() {
-      pronosticoService
-        .listarPronosticos()
-        .then((resposta) => {
-      //    console.log(resposta.data);
-          this.pronosticos = resposta.data;
-        })
-  
-  },
-    registrar(){
-    if (this.$refs.form.validate()) {
-   
-          if(this.pronostico.codigo===""||this.pronostico.codigo===null){
-      //Eliminar para que funcione el auto incrementable
-        delete this.pronostico.codigo;
+  data() {
+    return {
+      valid: false,
+      requestData: {
+        start: '20200101',
+        end: '20210101',
+        latitude: '-24',
+        longitude: '-54',
+        parameter: ''
+      },
+      totalPrecipitation: 0, // New property to hold total precipitation
+      parameters: [
+        { name: 'Precipitation Total (PRECTOT)', value: 'PRECTOT' },
+        { name: 'Precipitación Total Corregida (PRECTOTCORR)', value: 'PRECTOTCORR' }, // Agregado
+        { name: 'Temperature (T2M)', value: 'T2M' },
+        { name: 'Wind Speed (WS2M)', value: 'WS2M' }
+      ],
+      dateRules: [
+        v => !!v || 'Date is required',
+        v => /^\d{8}$/.test(v) || 'Date must be in YYYYMMDD format'
+      ],
+      latLongRules: [
+        v => !!v || 'Field is required',
+        v => (v >= -90 && v <= 90) || 'Latitude must be between -90 and 90',
+        v => (v >= -180 && v <= 180) || 'Longitude must be between -180 and 180'
+      ],
+      chartData: null,
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Value'
+            }
           }
-
-        console.log(this.pronostico);
-
-          pronosticoService.save(this.pronostico,this.config).then(resposta=>{
-           this.limpiar();
-              alert('Guardado exitoso!!')
-              this.listarPronosticos();
-               this.selectedTab="second";
-          });
-
-
-        
-      }
-    },
-    editarPronostico(pronostico){
-
-    //  console.log('Editar Pronostico');
-      
-     //
-     // console.log(this.pronostico);
-
-
-     this.pronostico.id=pronostico.id;
-     this.pronostico.id=pronostico.id;
-      this.pronostico.fecha=pronostico.fecha;
-     this.dateFormatted = this.formatDate(pronostico.fecha);
-     this.date=this.formatDate(pronostico.fecha);
-     this.pronostico.fechaString=pronostico.fechaString;
-     this.pronostico.precipitacion=pronostico.precipitacion;
-     this.pronostico.observacion=pronostico.observacion;
-     
-
-      this.tab="one";
-  
-       console.log(pronostico);
-
-    },
-    eliminarPronostico(pronostico){
-
-        if(confirm('Desea remover al pronostico')){
-        
-        pronosticoService.delete(pronostico).then(resposta=>{
-          this.listarPronosticos();
-          this.errors=[]
-          this.limpiar();
-
-        }).catch(e=>{
-
-          this.errors =e.response.data.errors
-
-        })
-
         }
+      }
+    };
+  },
+  methods: {
+    async submitForm() {
+      const { start, end, latitude, longitude, parameter } = this.requestData;
+      const url = `https://power.larc.nasa.gov/api/temporal/hourly/point?start=${start}&end=${end}&latitude=${latitude}&longitude=${longitude}&community=ag&parameters=${parameter}&format=json&user=Magno&header=true&time-standard=lst`;
 
+      console.log("URL");
+      console.log(url);
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
 
-        
+        // Inspecciona la respuesta de la API
+        console.log("API Response:", data);
 
-
-    },
-    limpiar(){
-
-     this.date=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-           this.dateFormatted=this.formatDate((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)),
-     
-		this.pronostico={
-				id:'',
-				id:0,
-				fecha:this.dateFormatted,
-				fechaString:'',
-				precipitacion:0,
-				observacion:'',
-	}
-
-        
-    },
-		formatDate (date) {
-		        if (!date) return null
-		
-		        const [year, month, day] = date.split('-')
-		        return `${day}-${month}-${year}`
-		      },
-		      parseDate (date) {
-		        if (!date) return null
-		
-		        const [year, month, day] = date.split('-')
-		        return `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`
-		      },
-		
-    validate () {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true;
+        // Asegúrate de que existe la estructura esperada
+        if (data.properties.parameter[parameter]) {
+          this.processData(data.properties.parameter[parameter]);
+        } else {
+          console.error("Data format incorrect or parameter missing");
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     },
-    reset() {
-    //  this.$refs.form.reset();
-      this.limpiar();
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation();
+    processData(data) {
+      if (!data || typeof data !== 'object') {
+        console.error("Invalid data format");
+        return;
+      }
+
+      // Obtener las fechas como etiquetas y los valores de precipitación o parámetro
+      const labels = Object.keys(data);  // Ejemplo: ["2020010100", "2020010101"]
+      const values = Object.values(data); // Ejemplo: [0.01, 0.03]
+
+      // Calcular la suma total de precipitaciones
+      this.totalPrecipitation = values.reduce((acc, value) => acc + value, 0);
+
+      // Actualizar los datos del gráfico
+      this.chartData = {
+        labels,
+        datasets: [
+          {
+            label: 'Precipitation Data (PRECTOTCORR)',  // Cambiar el label según el parámetro
+            backgroundColor: '#42A5F5',
+            borderColor: '#42A5F5',
+            data: values,
+            fill: false
+          }
+        ]
+      };
     }
-  },
-
-    watch: {
-      date (val) {
-        
-				this.dateFormatted = this.formatDate(this.date)
-		        this.pronostico.fecha=this.dateFormatted;
-		
-       
-      },
-    },
-  computed:{
-    
-	computedDateFormatted () {
-        return this.formatDate(this.date)
-      },
-
-
-    
-  
-  },
+  }
 };
 </script>
 
+<style scoped>
+.v-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-
-
+.line-chart {
+  max-height: 400px;
+}
+</style>
