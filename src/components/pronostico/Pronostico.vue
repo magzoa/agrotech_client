@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     {{ requestData }}
     <v-form v-model="valid">
       <!-- Start Date -->
@@ -70,11 +69,18 @@
 
     <!-- Chart Component -->
     <line-chart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions"></line-chart>
+
+    <!-- Respuesta de ChatGPT -->
+    <v-card-text v-if="chatGPTResponse">
+      <h3>Recomendación de ChatGPT:</h3>
+      <p>{{ chatGPTResponse }}</p>
+    </v-card-text>
   </v-container>
 </template>
 
 <script>
-// Importing required components from vue-chartjs and chart.js
+import axios from 'axios';
+import { http } from '@/services/config';
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
 
@@ -101,11 +107,11 @@ export default {
         longitude: '-54',
         parameter: ''
       },
-      totalPrecipitation: 0, // New property to hold total precipitation
-      suggestedCrops: '', // New property to hold suggested crops
+      totalPrecipitation: 0,
+      suggestedCrops: '',
       parameters: [
         { name: 'Precipitation Total (PRECTOT)', value: 'PRECTOT' },
-        { name: 'Precipitación Total Corregida (PRECTOTCORR)', value: 'PRECTOTCORR' }, // Agregado
+        { name: 'Precipitación Total Corregida (PRECTOTCORR)', value: 'PRECTOTCORR' },
         { name: 'Temperature (T2M)', value: 'T2M' },
         { name: 'Wind Speed (WS2M)', value: 'WS2M' }
       ],
@@ -136,7 +142,8 @@ export default {
             }
           }
         }
-      }
+      },
+      chatGPTResponse: '',
     };
   },
   methods: {
@@ -144,18 +151,30 @@ export default {
       const { start, end, latitude, longitude, parameter } = this.requestData;
       const url = `https://power.larc.nasa.gov/api/temporal/hourly/point?start=${start}&end=${end}&latitude=${latitude}&longitude=${longitude}&community=ag&parameters=${parameter}&format=json&user=Magno&header=true&time-standard=lst`;
 
-      console.log("URL");
-      console.log(url);
+      console.log("URL:", url);
       try {
         const response = await fetch(url);
         const data = await response.json();
 
-        // Inspecciona la respuesta de la API
+        // Inspect the API response
         console.log("API Response:", data);
 
-        // Asegúrate de que existe la estructura esperada
+        // Ensure the expected structure exists
         if (data.properties.parameter[parameter]) {
           this.processData(data.properties.parameter[parameter]);
+
+          // After processing the data, send the request to ChatGPT
+          const chatGPTResponse = await this.sendToChatGPT({
+            start,
+            end,
+            latitude,
+            longitude,
+            totalPrecipitation: this.totalPrecipitation,
+            suggestedCrops: this.suggestedCrops
+          });
+
+          console.log('ChatGPT Response:', chatGPTResponse);
+          this.chatGPTResponse = chatGPTResponse;  // Store the response for display
         } else {
           console.error("Data format incorrect or parameter missing");
         }
@@ -163,28 +182,55 @@ export default {
         console.error('Error fetching data:', error);
       }
     },
+
+    async sendToChatGPT(data) {
+      const prompt = `Los datos de precipitación acumulada para la ubicación (latitud: ${data.latitude}, longitud: ${data.longitude}) desde ${data.start} hasta ${data.end} muestran un total de ${data.totalPrecipitation} mm de lluvia. Los cultivos sugeridos para esta cantidad de precipitación son: ${data.suggestedCrops}. Basado en esta información, ¿qué recomendaciones puedes dar a los agricultores que desean plantar soja y maíz en esta área?`;
+
+      try {
+        const apiKey = process.env.VUE_APP_OPENAI_API_KEY; // Ensure your API key is set correctly
+        const response = await http.post(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        return response.data.choices[0].message.content;
+      } catch (error) {
+        console.error("Error sending data to ChatGPT:", error);
+        return "Hubo un problema al procesar la solicitud.";
+      }
+    },
+
     processData(data) {
       if (!data || typeof data !== 'object') {
         console.error("Invalid data format");
         return;
       }
 
-      // Obtener las fechas como etiquetas y los valores de precipitación o parámetro
-      const labels = Object.keys(data);  // Ejemplo: ["2020010100", "2020010101"]
-      const values = Object.values(data); // Ejemplo: [0.01, 0.03]
+      // Get dates as labels and values of precipitation or parameter
+      const labels = Object.keys(data);
+      const values = Object.values(data);
 
-      // Calcular la suma total de precipitaciones
+      // Calculate total precipitation
       this.totalPrecipitation = values.reduce((acc, value) => acc + value, 0);
-      
-      // Sugerir cultivos según la precipitación total
+
+      // Suggest crops based on total precipitation
       this.suggestCrops(this.totalPrecipitation);
 
-      // Actualizar los datos del gráfico
+      // Update chart data
       this.chartData = {
         labels,
         datasets: [
           {
-            label: 'Precipitation Data (PRECTOTCORR)',  // Cambiar el label según el parámetro
+            label: 'Precipitation Data (PRECTOTCORR)',  // Change the label based on the parameter
             backgroundColor: '#42A5F5',
             borderColor: '#42A5F5',
             data: values,
@@ -193,6 +239,7 @@ export default {
         ]
       };
     },
+
     suggestCrops(totalPrecipitation) {
       if (totalPrecipitation < 300) {
         this.suggestedCrops = "Trigo, Cítricos";
@@ -207,20 +254,9 @@ export default {
       } else if (totalPrecipitation >= 800 && totalPrecipitation < 1200) {
         this.suggestedCrops = "Maíz, Soja, Arroz";
       } else {
-        this.suggestedCrops = "Trigo, Soja,Maíz,Arroz, Cítricos";
+        this.suggestedCrops = "Recomendación para cultivos no disponible.";
       }
     }
   }
 };
 </script>
-
-<style scoped>
-.v-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.line-chart {
-  max-height: 400px;
-}
-</style>
