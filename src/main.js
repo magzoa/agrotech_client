@@ -13,7 +13,7 @@ import VueAxios from 'vue-axios'
 Vue.config.productionTip = false
 
 // Define your OpenAI API key here
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '';
 
 // Set up Axios headers globally
 axios.defaults.headers.common['Authorization'] = `Bearer ${OPENAI_API_KEY}`;
